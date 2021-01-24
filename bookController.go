@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 var Books []Book = []Book{
@@ -51,5 +54,53 @@ func create_book(w http.ResponseWriter, r *http.Request) {
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(newBook)
+}
+
+func edit_book(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
+	variables := mux.Vars(r)
+
+	id, err := strconv.Atoi(variables["bookId"])
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var new_book Book
+
+	body, err_request := ioutil.ReadAll(r.Body)
+
+	if err_request != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err_json := json.Unmarshal(body, &new_book)
+
+	if err_json != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	ind := -1
+
+	for i := range Books {
+		if Books[i].Id == id {
+			ind = i
+			break
+		}
+	}
+
+	if ind < 0 {
+		w.WriteHeader(http.StatusNotFound)
+	}
+
+	new_book.Id = Books[ind].Id
+	Books[ind] = new_book
+
+	w.WriteHeader(http.StatusAccepted)
+	json.NewEncoder(w).Encode(new_book)
 
 }
