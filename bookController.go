@@ -25,7 +25,7 @@ var Books []Book = []Book{
 	},
 }
 
-func list_books(w http.ResponseWriter, r *http.Request) {
+func listBooks(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 
@@ -34,7 +34,7 @@ func list_books(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(Books)
 }
 
-func create_book(w http.ResponseWriter, r *http.Request) {
+func createBook(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 
@@ -56,7 +56,7 @@ func create_book(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(newBook)
 }
 
-func edit_book(w http.ResponseWriter, r *http.Request) {
+func editBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	variables := mux.Vars(r)
@@ -68,7 +68,7 @@ func edit_book(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var new_book Book
+	var newBook Book
 
 	body, err_request := ioutil.ReadAll(r.Body)
 
@@ -77,7 +77,7 @@ func edit_book(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err_json := json.Unmarshal(body, &new_book)
+	err_json := json.Unmarshal(body, &newBook)
 
 	if err_json != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -97,10 +97,10 @@ func edit_book(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 	}
 
-	new_book.Id = Books[ind].Id
-	Books[ind] = new_book
+	newBook.Id = Books[ind].Id
+	Books[ind] = newBook
 
 	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(new_book)
+	json.NewEncoder(w).Encode(newBook)
 
 }
