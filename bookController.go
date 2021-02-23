@@ -64,6 +64,7 @@ func editBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(variables["bookId"])
 
 	if err != nil {
+		fmt.Println("Error: Problem with price value")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
